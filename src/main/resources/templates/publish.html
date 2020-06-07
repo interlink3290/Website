@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>发布帖子</title>
+    <head th:replace="fragment/import::common"></head>
+    <head th:replace="fragment/import::markdown"></head>
+    <head th:replace="fragment/import::markdownEdit"></head>
+</head>
+<body>
+<!--顶部导航栏-->
+<div th:replace="fragment/top_navigation::nav"></div>
+<div class="container-fluid main">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="publish-error-nav">
+                <h3>
+                    <img src="/icons/cursor.svg" class="nav-title-icon">
+                    &nbsp;发起
+                </h3>
+                <div class="alert alert-danger publish-error" th:if="${error != null}">
+                    <span class="glyphicon glyphicon-warning-sign"></span>[[${error}]]！！！
+                </div>
+            </div>
+            <hr>
+            <form action="/publish" method="post"
+                  data-validator-option="{theme:'yellow_right_effect', timely:2, stopOnError:true}">
+                <input type="hidden" name="id" th:value="${id}"/>
+                <div class="form-group">
+                    <label for="title">标题（简明扼要）</label>
+                    <input type="text" class="form-control" id="title" name="title" th:value="${title}"
+                           placeholder="请输入标题" autocomplete="off" data-rule="标题:required; length(0~30)">
+                </div>
+                <label for="description">描述（内容合理，如果是向他人提问，请将问题描述清晰）</label>
+                <div class="form-group" id="question-editor">
+                    <textarea style="display:none;" class="form-control" rows="10" name="description" id="description"
+                              th:text="${description}" data-rule="描述:required;">
+                    </textarea>
+                </div>
+                <div class="form-group">
+                    <label for="tags_input">选择标签（最多5个）</label>
+                    <div class="tags-input-div">
+                        <input type="text" class="form-control" id="tags_input" name="tags" placeholder="请选择标签"
+                               th:value="${tags}" autocomplete="off" onclick="showSelectTag()" readonly="readonly"
+                               data-rule="标签:required;">
+                        <span class="glyphicon glyphicon-menu-down input-tag-btn" onclick="showSelectTag()"></span>
+                        <span class="glyphicon glyphicon-menu-up input-tag-btn" onclick="closeSelectTag()"></span>
+                    </div>
+
+                    <!--所有标签-->
+                    <div id="tag-list" class="publish-tag-list">
+                        <!-- 标签类型 -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" th:each="tagDto,interStat : ${tagDtos}"
+                                th:classappend="${interStat.first} ? 'active' : ''">
+                                <a th:href="'#'+${tagDto.categoryName}" aria-controls="home" role="tab"
+                                   data-toggle="tab" th:text="${tagDto.categoryName}">
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- 标签内容 -->
+                        <div class="tab-content publish-tab-tags">
+                            <div role="tabpanel" class="tab-pane fade"
+                                 th:classappend="${interStat.first} ? 'in active' : ''"
+                                 th:each="tagDto,interStat : ${tagDtos}" th:id="${tagDto.categoryName}">
+                             <span th:each="tag : ${tagDto.tags}">
+                                 <span th:id="'all'+${tag}" class="label label-primary tag-style select">
+                                    <span class="glyphicon glyphicon-tags" onclick="selectTag(this)"
+                                          th:data-tag="${tag}"></span>
+                                    <span class="tag-text" th:id="${tag}" th:text="${tag}" onclick="selectTag(this)"
+                                          th:data-tag="${tag}"></span>
+                                    <span class="glyphicon glyphicon-remove publish-tag-remove" th:id="'remove-'+${tag}"
+                                          onclick="deleteTag(this)" th:data-tag="${tag}"></span>
+                                </span>
+                             </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success btn-publish">发布</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div>
+    <span class="glyphicon glyphicon-menu-up click-top-btn" id="returnTop"></span>
+</div>
+<!--顶部须知 模态框-->
+<div th:replace="fragment/notice::modal"></div>
+
+<script>
+    $(function () {
+        customTheme();
+    });
+</script>
+</body>
+</html>

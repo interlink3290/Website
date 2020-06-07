@@ -1,0 +1,78 @@
+# 端口
+server:
+  port: 8887
+
+spring:
+  #禁用Thymeleaf模板缓存
+  thymeleaf:
+    cache: false
+  #配置数据源
+  datasource:
+    url: jdbc:mysql://localhost:3306/db_community?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: 32908914
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # 配置邮件
+  mail:
+    host: smtp.qq.com # 邮箱服务器地址
+    username: 178467158@qq.com # 邮箱地址
+    password: gtpnnwdrbojvbgcf # 邮箱密码
+    port: 465
+    protocol: smtp
+    default-encoding: utf-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+          ssl:
+            enable: true
+          starttls:
+            enable: true
+            required: true
+
+  # 配置 redis
+  redis:
+    database: 0
+    host: 127.0.0.1 # redis地址
+    port: 6379
+
+# 发送者邮箱
+sender:
+  email: 178467158@qq.com
+
+# 开启 mybatis 驼峰标识
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.lhx.community.mapper
+
+# GitHub登录需要的参数
+github:
+  client_id: 2ebde82c9d95376b86cc
+  client_secret: 191f0c5101f73decd163efd1f1a9b3a68931cc09
+  redirect_uri: http://localhost:8887/githubCallback
+
+# 阿里云图片上传需要的参数
+aliyun:
+  endpoint: # oss地址
+  accessKeyId: # 阿里云用户id
+  accessKeySecret: # 阿里云用户密码
+  bucketName: # Bucket名称
+
+# 日志配置
+logging:
+  file:
+    name: log/community.log
+    max-size: 200MB
+    max-history: 30
+  level:
+    com.sjl.community.mapper: debug
+    root: info
+
+# 默认头像链接
+beetle:
+  defaultAvatar: https://beetle-community.oss-cn-hangzhou.aliyuncs.com/default-avatar.png

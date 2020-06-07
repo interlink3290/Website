@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!--统一管理css js引入-->
+<head th:fragment="common">
+    <link rel="shortcut icon" href="/images/bug.ico" type="image/x-icon">
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-theme.css">
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/moment.min.js"></script>
+    <link rel="stylesheet" href="/dist/jquery.validator.css">
+    <script src="/dist/jquery.validator.min.js?local=zh-CN"></script>
+    <link rel="stylesheet" href="/css/community.css">
+    <script src="/js/community.js"></script>
+</head>
+<head th:fragment="markdown">
+    <link rel="stylesheet" href="/markdown/css/editormd.min.css">
+    <link rel="stylesheet" href="/markdown/css/editormd.preview.min.css">
+    <script src="/markdown/editormd.min.js"></script>
+    <script src="/markdown/lib/marked.min.js"></script>
+    <script src="/markdown/lib/prettify.min.js"></script>
+</head>
+
+<script th:fragment="markdownEdit" type="text/javascript">
+    $(function() {
+        var editor = editormd("question-editor", {
+            width: "100%",
+            height: "600px",
+            path: "/markdown/lib/",
+            delay: 0,
+            placeholder: "使用Markdown输入",
+            emoji: true,
+            //图片上传
+            imageUpload: true,
+            imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+            imageUploadURL: "/file/upload",
+        });
+    });
+</script>
+<script th:fragment="markdownView" type="text/javascript">
+    $(function() {
+        var testView = editormd.markdownToHTML("question-view", {
+
+        });
+    });
+</script>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${sectionName}">小虫社区</title>
+    <head th:replace="fragment/import::common"></head>
+</head>
+<body>
+<!--顶部导航栏-->
+<div th:replace="fragment/top_navigation::nav"></div>
+<div class="container-fluid main">
+    <div class="row">
+        <div class="page_left col-lg-9 col-md-9 col-sm-12 col-xs-12">
+            <h3>
+                <img th:if="${section=='questions'}" src="/icons/question-square.svg" class="nav-title-icon">
+                <img th:if="${section=='replies'}" src="/icons/bell.svg" class="nav-title-icon">
+                &nbsp;[[${sectionName}]]
+            </h3>
+            <span class="to-right">
+            <img src="/icons/check-circle.svg" class="user-oper-icon">
+            <a href="/notification/0" th:if="${section=='replies'}" class="a-no-line">一键已读</a>
+            </span>
+            <hr>
+            <!--问题列表-->
+            <div th:if="${section} == 'questions'">
+                <div th:replace="fragment/question_list::list(true)"></div>
+            </div>
+            <!--通知列表-->
+            <div th:if="${section} == 'replies'">
+                <div th:replace="fragment/reply_list::list"></div>
+            </div>
+            <!--分页栏-->
+            <div th:replace="fragment/page_navigation::nav"></div>
+        </div>
+
+    </div>
+</div>
+<div>
+    <span class="glyphicon glyphicon-menu-up click-top-btn" id="returnTop"></span>
+</div>
+<!--顶部须知 模态框-->
+<div th:replace="fragment/notice::modal"></div>
+
+</body>
+</html>

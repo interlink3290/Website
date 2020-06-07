@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>小虫社区</title>
+    <head th:replace="fragment/import::common"></head>
+</head>
+<body>
+<!--顶部导航栏-->
+<div th:replace="fragment/top_navigation::nav"></div>
+
+<div class="container-fluid main">
+    <div class="row">
+        <div class="page_left col-lg-9 col-md-9 col-sm-12 col-xs-12">
+            <ul class="nav nav-pills">
+                <li role="presentation" class="active"><a href="/">主页</a></li>
+                <li role="presentation"><a href="/?tag=讨论区">讨论区</a></li>
+                <li role="presentation"><a href="/?tag=课程推荐">课程推荐</a></li>
+                <li role="presentation"><a href="/?tag=刷题">刷题</a></li>
+                <li role="presentation"><a href="/?tag=校园周边">校园周边</a></li>
+                <li role="presentation"><a href="/?tag=资源共享">资源共享</a></li>
+            </ul>
+            <h4>
+                <img src="/icons/display.svg" class="nav-title-icon">
+                &nbsp;发现
+            </h4>
+            <div>
+                <ul class="nav nav-tabs">
+                    <li role="presentation" th:class="${sortType == null || sortType == 'new' ? 'active' : ''}">
+                        <a href="/?sort=new">最新</a>
+                    </li>
+                    <li role="presentation" th:class="${sortType == 'hot' ? 'active' : ''}">
+                        <a href="/?sort=hot">最热</a>
+                    </li>
+                    <li role="presentation" th:class="${sortType == 'no' ? 'active' : ''}">
+                        <a href="/?sort=no" >消灭零回复</a>
+                    </li>
+                </ul>
+            </div>
+            <!--问题列表-->
+            <div th:replace="fragment/question_list::list(false)"></div>
+            <!--分页栏-->
+            <div th:replace="fragment/page_navigation::nav"></div>
+        </div>
+        <div class="page_right col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <h4>
+                <img src="/icons/hot.svg" class="nav-title-icon">
+                热门标签
+            </h4>
+            <div class="hot-tag-list">
+                <span class="label label-primary tag-style" th:each="tag : ${hotTags}">
+                    <a th:href="@{/(tag=${tag})}">
+                        <span class="glyphicon glyphicon-tags"></span>
+                        <span th:text="${tag}"></span>
+                    </a>
+                </span>
+            </div>
+            <hr>
+            <h4>
+                <img src="/icons/rooter.svg" class="nav-title-icon">
+                联系站长
+            </h4>
+            <div class="connect-webMaster">
+                <img src="/images/connectme.png" class="img-thumbnail img-wecat">
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <span class="glyphicon glyphicon-menu-up click-top-btn" id="returnTop"></span>
+</div>
+
+<!--顶部须知 模态框-->
+<div th:replace="fragment/notice::modal"></div>
+<div></div>
+
+</body>
+</html>

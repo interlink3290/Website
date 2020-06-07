@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>小虫社区</title>
+    <head th:replace="fragment/import::common"></head>
+</head>
+
+<body>
+<!--顶部导航栏-->
+<div th:replace="fragment/top_navigation::nav"></div>
+
+<div class="container-fluid main person">
+    <div class="row">
+        <!--图片-->
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 person-info-image"></div>
+        <!--个人信息-->
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 person-info-main">
+            <div class="person-info">
+                <div class="person-avatar">
+                    <img th:src="${userInfo.avatarUrl}" class="img-thumbnail">
+                </div>
+                <div class="person-content">
+                    <div>
+                        <h3 th:text="${userInfo.name}"></h3>
+                        <h3 th:text="'等级 Lv'+${userInfo.level}"></h3>
+                        <b th:text="${userInfo.bio == null ? '' : userInfo.bio}"></b>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-group" role="group" aria-label="...">
+                <button type="button" class="btn btn-default" th:if="${session.user != null && session.user.id == userInfo.id}" onclick="signin()">签到</button>
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#forget-pwd" th:if="${session.user != null && session.user.id == userInfo.id && session.user.password != null}">修改密码</button>
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#change-user-info" th:if="${session.user != null && session.user.id == userInfo.id}">修改个人信息</button>
+                <button type="button" class="btn btn-default" th:if="${session.user != null && session.user.id == 1}" onclick="unspeakable()">禁言</button>
+                <button type="button" class="btn btn-default" th:if="${session.user != null && session.user.id == 1}" onclick="speakable()">解禁</button>
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 person-info-main">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h3>
+                    <img src="/icons/question-square.svg" class="nav-title-icon">&nbsp;
+                    [[${session.user != null && session.user.id == userInfo.id ? '我的提问' : 'TA的提问'}]]
+                </h3>
+                <hr>
+                <!--问题列表-->
+                <div>
+                    <div th:replace="fragment/question_list::list(${session.user != null && session.user.id == userInfo.id ? true : false})"></div>
+                </div>
+                <!--分页栏-->
+                <div th:replace="fragment/page_navigation::nav"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <span class="glyphicon glyphicon-menu-up click-top-btn" id="returnTop"></span>
+</div>
+
+<!--忘记密码模态框-->
+<div class="modal fade" id="forget-pwd" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">
+                    <img src="/icons/clock.svg" class="nav-title-icon">
+                    找回密码
+                </h4>
+            </div>
+            <form action="/updatePwd" method="post"
+                  data-validator-option="{theme:'yellow_right_effect', stopOnError:true}">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="find-email">我的邮箱</label>
+                        <input type="email" class="form-control" id="find-email" placeholder="Email"
+                               name="email" data-rule="邮箱: required; email">
+                    </div>
+                    <div class="form-group">
+                        <label for="find-code">验证码
+                            <button id="send-email-btn" type="button" class="btn btn-success btn-xs send-email-btn"
+                                    onclick="sendFindEmail()">获取验证码
+                            </button>
+                        </label>
+                        <input type="text" class="form-control" id="find-code" placeholder="Verification Code"
+                               name="code"
+                               data-rule="验证码:required;length(6)">
+                    </div>
+                    <div class="form-group">
+                        <label for="find-pwd1">新的密码</label>
+                        <input type="password" class="form-control" id="find-pwd1" placeholder="Password"
+                               name="pwd1" data-rule="新的密码:required;length(6~16)">
+                    </div>
+                    <div class="form-group">
+                        <label for="find-pwd2">确认密码</label>
+                        <input type="password" class="form-control" id="find-pwd2" placeholder="Verify Password"
+                               name="pwd2" data-rule="确认密码:required; match(pwd1)">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger" onclick="updatePwd()">确认修改</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--修改个人信息模态框-->
+<div class="modal fade" id="change-user-info" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">
+                    <img src="/icons/clock.svg" class="nav-title-icon">
+                    修改信息
+                </h4>
+            </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="user_id" th:value="${userInfo.id}">
+                    <div class="form-group">
+                        <label for="find-name">用户名</label>
+                        <input type="name" class="form-control" id="find-name" placeholder="用户名"
+                               name="name" data-rule="用户名: required">
+                    </div>
+                    <div class="form-group">
+                        <label for="find-bio">个人简介</label>
+                        <input type="bio" class="form-control" id="find-bio" placeholder="简介"
+                               name="bio" data-rule="个人简介:required">
+                    </div>
+                    <div class="form-group">
+                        <label for="find-url">头像url</label>
+                        <input type="avatar_url" class="form-control" id="find-url" placeholder="url"
+                               name="avatar_url" data-rule="头像url:required">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="updateInfo()">确认</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+
+        </div>
+    </div>
+</div>
+<!--顶部须知 模态框-->
+<div th:replace="fragment/notice::modal"></div>
+<script type="application/javascript">
+    function updateInfo() {
+
+        let id = document.getElementById("user_id").value;
+        let name = document.getElementById("find-name").value;
+        let bio = document.getElementById("find-bio").value;
+        let avatar_url  = document.getElementById("find-url").value;
+        console.log(id,name,bio,avatar_url);
+        $.post("/updateuserinfo", {"id": id,"name": name,"bio": bio,"avatar_url": avatar_url});
+        alert("修改成功");
+    }
+    function unspeakable() {
+        let id = document.getElementById("user_id").value;
+        $.post("/user/userUnspeakable", {"id": id});
+        alert("禁言成功");
+    }
+    function speakable() {
+        let id = document.getElementById("user_id").value;
+        console.log(id);
+        $.post("/user/userSpeakable", {"id": id});
+        alert("解禁成功");
+    }
+    function signin() {
+        let uid = document.getElementById("user_id").value;
+        if (confirm("确认签到")) {
+            $.ajax({
+                type: "GET",
+                url: "/user/signIn/"+uid,
+                success: function () {
+                    alert("签到成功");
+                    window.location.href="/user/"+uid;
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

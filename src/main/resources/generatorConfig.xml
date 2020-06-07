@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <!--从application.yml导入属性配置-->
+    <properties resource="application.properties"/>
+
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <!--配置分页插件-->
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/>
+
+        <!--配置jdbc连接信息-->
+        <jdbcConnection driverClass="${spring.datasource.driver-class-name}"
+                        connectionURL="${spring.datasource.url}"
+                        userId="${spring.datasource.username}"
+                        password="${spring.datasource.password}">
+            <property name="nullCatalogMeansCurrent" value="true"/>
+        </jdbcConnection>
+
+        <!--类型转换-->
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+
+        <!--生成实体类地址-->
+        <javaModelGenerator targetPackage="com.sjl.community.model" targetProject="src\main\java">
+            <property name="enableSubPackages" value="false" />
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <!-- 生成mapper.xml文件 -->
+        <sqlMapGenerator targetPackage="mapper"  targetProject="src\main\resources">
+            <property name="enableSubPackages" value="false" />
+        </sqlMapGenerator>
+
+        <!-- 生成mapxml对应client，也就是接口dao -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.sjl.community.mapper"  targetProject="src\main\java">
+            <property name="enableSubPackages" value="false" />
+        </javaClientGenerator>
+
+        <!--配置数据库表-->
+        <table tableName="user" domainObjectName="User" />
+        <table tableName="question" domainObjectName="Question" />
+        <table tableName="comment" domainObjectName="Comment" />
+        <table tableName="notification" domainObjectName="Notification" />
+    </context>
+</generatorConfiguration>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="nav">
+    <nav class="navbar navbar-default top-nav">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <b><a class="navbar-brand logo" th:href="@{/}">Bugs</a></b>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <form class="navbar-form navbar-left" action="/" method="get">
+                    <div class="form-group">
+                        <input type="text" class="form-control search-input" name="search" placeholder="输入关键词">
+                    </div>
+                    <button type="submit" class="btn btn-default">搜索</button>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a type="button"  data-toggle="modal" data-target="#myModal" style="cursor:pointer;">
+                            须知
+                        </a>
+                    </li>
+                    <li th:if="${session.user == null}" data-toggle="tooltip" data-placement="bottom" title="请先登录">
+                        <a>发帖</a>
+                    </li>
+                    <li th:if="${session.user != null && session.user.speakable==0}" data-toggle="tooltip" data-placement="bottom" title="您已被禁言">
+                        <a>发帖</a>
+                    </li>
+                    <li th:if="${session.user != null && session.user.speakable!=0 && session.user.level>1}">
+                        <a th:href="@{/publish}">发帖</a>
+                    </li>
+                    <li th:if="${session.user != null}" role="presentation" data-toggle="tooltip" data-placement="bottom" th:title="${session.unreadCount}+条未读消息">
+                        <a href="/profile/replies">
+                            <img th:if="${session.unreadCount!=null&&session.unreadCount>0}" class="user-oper-icon" src="/icons/new-message.svg">
+                            <img th:unless="${session.unreadCount!=null&&session.unreadCount>0}" class="user-oper-icon" src="/icons/bell.svg">
+                        </a>
+                    </li>
+                    <li class="dropdown" th:if="${session.user != null}">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">
+                            <img th:src="${session.user.avatarUrl}" class="img-rounded user_login_avatar">
+                            <span class="caret"></span>
+                            <ul class="dropdown-menu user-oper-list">
+                                <li>
+                                    <a th:href="@{/user/{id}(id=${session.user.id})}">
+                                        <img class="user-oper-icon" src="/icons/person.svg">
+                                        个人主页
+                                    </a>
+                                </li>
+                                <li>
+                                    <a th:href="@{/profile/questions}">
+                                        <img class="user-oper-icon" src="/icons/question.svg">
+                                        我的帖子
+                                    </a>
+                                </li>
+                                <li>
+                                    <a th:href="@{/profile/replies}">
+                                        <img th:if="${session.unreadCount!=null&&session.unreadCount>0}" class="user-oper-icon" src="/icons/new-message.svg">
+                                        <img th:unless="${session.unreadCount!=null&&session.unreadCount>0}" class="user-oper-icon" src="/icons/bell.svg">
+                                        最新回复
+                                    </a>
+                                </li>
+                                <li>
+                                    <a th:href="@{/logout}">
+                                        <img class="user-oper-icon" src="/icons/box-arrow-right.svg">
+                                        退出登录
+                                    </a>
+                                </li>
+                            </ul>
+                        </a>
+                    </li>
+                    <li class="dropdown" th:if="${session.user == null}">
+                        <a href="/login">登录</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+</body>
+</html>

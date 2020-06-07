@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${questionDto.title}">小虫社区</title>
+    <head th:replace="fragment/import::common"></head>
+    <head th:replace="fragment/import::markdown"></head>
+    <head th:replace="fragment/import::markdownView"></head>
+</head>
+
+<body>
+<!--顶部导航栏-->
+<div th:replace="fragment/top_navigation::nav"></div>
+<div class="container-fluid main">
+    <div class="row">
+        <div class="page_left col-lg-9 col-md-9 col-sm-12 col-xs-12">
+            <!--问题详情-->
+            <h3>
+                <img src="/icons/book.svg" class="nav-title-icon">
+                &nbsp;[[${questionDto.title}]]
+            </h3>
+            <span class="question_info">
+                标签：[[${questionDto.tags}]] |
+                作者：[[${questionDto.user.name}]] |
+                发布于：[[${#dates.format(questionDto.gmtCreate, 'yyyy-MM-dd HH:mm:ss')}]] |
+                阅读数：[[${questionDto.viewCount}]] |
+                评论数：[[${questionDto.commentCount}]]
+            </span>
+            <hr>
+            <div id="question-view">
+                <textarea style="display:none;" th:text="${questionDto.description}"></textarea>
+            </div>
+
+            <hr>
+            <div>
+                <span class="label label-primary tag-style" th:each="tag : ${questionDto.tags.split(',')}">
+                    <a th:href="@{/(tag=${tag})}">
+                        <span class="glyphicon glyphicon-tags"></span>
+                        <span th:text="${tag}"></span>
+                    </a>
+                </span>
+            </div>
+            <hr>
+            <div class="to-right" th:if="${session.user != null && (questionDto.creator==session.user.id) || session.user.id==1 }">
+                <a th:href="@{/publish/{id}(id=${questionDto.id})}" class="question_text profile-canEdit a-no-line" th:if="${session.user != null && questionDto.creator==session.user.id}">
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                    编辑
+                </a>
+                <a class="question_text profile-canEdit a-no-line" th:onclick="deleteQuestion([[${questionDto.id}]])" th:if="${session.user != null && (questionDto.creator==session.user.id) || session.user.id==1 }">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    删除
+                </a>
+            </div>
+            <!--问题评论的列表-->
+            <div class="comment_count">
+                <h4>
+                    <img src="/icons/chat.svg" class="nav-title-icon">
+                    &nbsp;[[${questionDto.commentCount+'个回复'}]]
+                </h4>
+            </div>
+            <hr>
+            <div th:each="commentDto : ${commentDtos}">
+                <div class="media">
+                    <div class="media-left">
+                        <a th:href="@{/user/{id}(id=${commentDto.commentator})}">
+                            <img class="media-object img-rounded user_avatar"
+                                 th:src="${commentDto.user.avatarUrl} == null ? '' : ${commentDto.user.avatarUrl}"
+                                 alt="...">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <span class="media-heading question_text" th:text="${commentDto.user.name}"></span>
+                        <br>
+                        <span th:text="${commentDto.content}"></span>
+                    </div>
+                </div>
+                <!--问题评论的操作-->
+                <div class="comment_operating">
+                    <span class="glyphicon glyphicon-thumbs-up btn oper-btn"></span>
+                    <span class="glyphicon glyphicon-comment btn oper-btn"
+                          th:id="'sub_comment_btn-'+${commentDto.id}" th:data-id="${commentDto.id}"
+                          onclick="show_subComment(this)">
+                    </span>
+                    <span class="question_text" th:text="${commentDto.commentCount}+'条回复'"></span>
+                    <span class="question_text to-right" th:text="${#dates.format(commentDto.gmtModified, 'yyyy-MM-dd HH:mm:ss')}">评论时间</span>
+                </div>
+                <!--子评论的内容-->
+                <div th:id="'comment-'+${commentDto.id}" class="collapse sub_comments">
+                    <!--提交子评论-->
+                    <div>
+                        <input class="form-control" placeholder="请输入评论的内容" th:id="${'input-'+commentDto.id}" th:if="${session.user != null && session.user.speakable!=0}">
+                        <button type="button" class="btn btn-success btn-publish" th:data-id="${commentDto.id}" th:if="${session.user != null && session.user.speakable!=0}" onclick="submit_comment_comment(this)">评论</button>
+                    </div>
+                </div>
+
+                <hr class="comment_cut_line">
+            </div>
+            <!--提交问题评论-->
+            <h4 class="comment_commit">
+                <img src="/icons/check-circle.svg" class="nav-title-icon">
+                &nbsp;提交评论
+            </h4>
+            <hr>
+            <div class="media creator_card">
+                <div class="media-left">
+                    <img class="media-object img-rounded user_avatar"
+                         th:src="${session.user} == null ? '/images/default-avatar.png' : ${session.user.avatarUrl}">
+                </div>
+                <div class="media-body question_text">
+                    <span class="media-middle" th:text="${session.user} == null ? '登录后即可评论' : '评论者：'+${session.user.name}"></span>
+                </div>
+            </div>
+            <input type="hidden" id="question_parent_id" th:value="${questionDto.id}">
+            <div class="form-group comment_context_section" id="comment_frame">
+                <textarea class="form-control" rows="10" id="question_comment_content" placeholder="输入评论内容" th:if="${session.user != null && session.user.speakable!=0}"></textarea>
+            </div>
+            <button type="button" class="btn btn-success btn-publish" onclick="submit_question_comment()" th:if="${session.user != null && session.user.speakable!=0}">提交</button>
+        </div>
+        <!--右边栏-->
+        <div class="page_right col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
+            <h4>
+                <img src="/icons/person.svg" class="nav-title-icon">
+                发起人
+            </h4>
+            <div class="media creator_card">
+                <div class="media-left media-middle">
+                    <a th:href="@{/user/{id}(id=${questionDto.user.id})}">
+                        <img class="media-object img-rounded user_avatar"
+                             th:src="${questionDto.user.avatarUrl} == null ? '' : ${questionDto.user.avatarUrl}">
+                    </a>
+                </div>
+                <div class="media-body question_text">
+                    用户名：<span class="media-heading" th:text="${questionDto.user.name}"></span>
+                    <br>
+                    个人描述：<span th:text="${questionDto.user.bio}"></span>
+                </div>
+            </div>
+            <hr>
+            <h4>
+                <img src="/icons/question.svg" class="nav-title-icon">
+                相关问题
+            </h4>
+            <ul class="related_question_list">
+                <li th:each="quesiton : ${questionByTags}">
+                    <a th:href="@{'/question/'+${quesiton.id}}" th:text="${quesiton.title}"></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div>
+    <span class="glyphicon glyphicon-menu-up click-top-btn" id="returnTop"></span>
+</div>
+<!--顶部须知 模态框-->
+<div th:replace="fragment/notice::modal"></div>
+
+</body>
+</html>
