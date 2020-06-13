@@ -282,20 +282,6 @@ function updatePwd() {
     let pwd1 = $("#find-pwd1").val();
     let pwd2  = $("#find-pwd2").val();
     console.log(pwd1, pwd2);
-    /*$.ajax({
-        url: "/updatePwd",
-        type: "POST",
-        data: {
-            "email": email,
-            "code": code,
-            "pwd1": pwd1,
-            "pwd2": pwd2,
-        },
-        dataType: "json",
-        success: function (data) {
-            console.log("返回数据：", data);
-        }
-    });*/
     $.post("/updatePwd", {"email": email,"code": code,"pwd1": pwd1,"pwd2": pwd2});
 }
 

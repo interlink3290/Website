@@ -24,8 +24,8 @@
             <id>dev</id>
             <properties>
                 <db.url>jdbc:mysql://localhost:3306/db_community?useUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=UTC</db.url>
-                <db.user>root</db.user>
-                <db.password>32908914</db.password>
+                <db.user><!--用户名--></db.user>
+                <db.password><!--密码--></db.password>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -44,28 +44,24 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!--引入okhttp，发送请求-->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>3.6.0</version>
         </dependency>
 
-        <!--引入fastjson-->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.62</version>
         </dependency>
 
-        <!--引入mybatis-->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>2.1.1</version>
         </dependency>
 
-        <!--引入mysql-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -77,7 +73,7 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
 
-        <!-- 引入lombok -->
+        <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -85,14 +81,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--yml提示-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
 
-        <!--阿里云OOS-->
         <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
@@ -143,7 +137,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!--引入flyway插件-->
+            <!--flyway插件-->
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
@@ -161,13 +155,12 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <!--引入mybatis generator-->
+            <!--mybatis generator-->
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
                 <version>1.4.0</version>
                 <dependencies>
-                    <!--加入mysql驱动-->
                     <dependency>
                         <groupId>mysql</groupId>
                         <artifactId>mysql-connector-java</artifactId>

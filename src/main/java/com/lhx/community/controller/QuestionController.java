@@ -53,7 +53,7 @@ public class QuestionController {
     }
 
     /**
-     * 顶置问题
+     * 置顶问题
      *
      * @param oper
      * @param id
